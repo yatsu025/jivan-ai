@@ -24,7 +24,7 @@ const HinduPage = ({ onHome }: HinduPageProps) => {
 
   const callGeminiAPI = async (prompt: string) => {
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyC5HvSdg2QN1eHINuqO9yxJwY7r6Op3Mo8`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyA7RiLN4pXGdCHd66yXmSdiRrlEgxmQykQ`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,17 +32,31 @@ const HinduPage = ({ onHome }: HinduPageProps) => {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `You are a wise Hindu spiritual guide. Respond with compassion and wisdom based on Hindu philosophy, scriptures, and traditions. Keep responses helpful and respectful. User question: ${prompt}`
+              text: `You are a wise Hindu spiritual guide and devotee of Lord Krishna. Always respond in the same language as the user's question (Hindi, English, or Hinglish). 
+
+For Hindu spiritual guidance, structure your response as:
+"श्री कृष्ण कहते हैं: {relevant Gita shloka in Sanskrit}
+अर्थ: {meaning of the shloka in user's language}
+समाधान: {practical solution/guidance based on Krishna's teachings}"
+
+Keep responses helpful, respectful, and based on Hindu dharma, Bhagavad Gita, and Krishna's teachings. User question: ${prompt}`
             }]
           }]
         })
       });
 
+      if (!response.ok) {
+        if (response.status === 429) {
+          return 'API अभी ज्यादा व्यस्त है। कृपया 2-3 मिनट बाद प्रयास करें। श्री कृष्ण आपके धैर्य को देख रहे हैं। 🙏';
+        }
+        throw new Error('API Error');
+      }
+
       const data = await response.json();
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || 'मुझे खुशी होगी आपकी सहायता करने में। कृपया अपना प्रश्न दोबारा पूछें।';
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || 'श्री कृष्ण की कृपा से मैं आपकी सहायता करूंगा। कृपया अपना प्रश्न दोबारा पूछें। 🕉️';
     } catch (error) {
       console.error('Error calling Gemini API:', error);
-      return 'क्षमा करें, मुझे कुछ तकनीकी समस्या है। कृपया बाद में प्रयास करें।';
+      return 'API में कुछ तकनीकी समस्या है। कृपया थोड़ी देर बाद प्रयास करें। हरे कृष्ण! 🙏';
     }
   };
 
@@ -80,85 +94,108 @@ const HinduPage = ({ onHome }: HinduPageProps) => {
   }, [messages]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-4 shadow-lg">
-        <div className="flex items-center justify-between max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 relative overflow-hidden">
+      {/* Enhanced 3D Background */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-10 left-10 w-32 h-32 bg-orange-300 rounded-full animate-float blur-2xl"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-amber-400 rounded-full animate-float blur-xl" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-yellow-300 rounded-full animate-float blur-3xl" style={{ animationDelay: '4s' }}></div>
+      </div>
+
+      {/* Enhanced Header */}
+      <div className="bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 p-4 shadow-2xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
+        <div className="flex items-center justify-between max-w-4xl mx-auto relative z-10">
           <Button 
             onClick={onHome}
             variant="ghost" 
-            className="text-white hover:bg-white/20"
+            className="text-white hover:bg-white/20 transition-all duration-300 hover:scale-105"
           >
             <Home className="w-5 h-5 mr-2" />
             Home
           </Button>
-          <h1 className="text-2xl font-hindi font-semibold text-white">
+          <h1 className="text-3xl font-hindi font-bold text-white drop-shadow-lg animate-glow">
             🕉️ हिंदू धर्म गाइड
           </h1>
           <div></div>
         </div>
       </div>
 
-      {/* Animated Basuri */}
-      <div className="flex justify-center py-8">
-        <div className="relative">
-          <div className="text-6xl animate-float">🪈</div>
-          <div className="absolute -top-2 -right-2 text-2xl animate-glow">✨</div>
+      {/* Enhanced Animated Basuri with 3D effect */}
+      <div className="flex justify-center py-12">
+        <div className="relative transform-gpu">
+          <div className="text-8xl animate-float transform-gpu" style={{
+            animation: 'float 4s ease-in-out infinite, rotate3d 12s linear infinite',
+            filter: 'drop-shadow(0 10px 20px rgba(255,165,0,0.3))'
+          }}>🪈</div>
+          <div className="absolute -top-4 -right-4 text-3xl animate-glow">✨</div>
+          <div className="absolute -bottom-2 -left-2 text-2xl animate-bounce">🌺</div>
+          {/* 3D Floating Musical Notes */}
+          <div className="absolute top-0 left-16 text-2xl animate-float opacity-70" style={{ animationDelay: '1s' }}>🎵</div>
+          <div className="absolute bottom-4 right-16 text-xl animate-float opacity-60" style={{ animationDelay: '3s' }}>🎶</div>
         </div>
       </div>
 
-      {/* Chat Area */}
+      {/* Enhanced Chat Area */}
       <div className="max-w-4xl mx-auto p-4 h-96">
-        <ScrollArea className="h-full bg-white/70 rounded-2xl p-4 shadow-inner" ref={scrollAreaRef}>
+        <ScrollArea className="h-full bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-2xl border border-orange-200" ref={scrollAreaRef}>
           {messages.length === 0 ? (
-            <div className="text-center text-orange-600 font-hindi text-lg p-8">
-              <p>🙏 नमस्ते! मैं आपका आध्यात्मिक साथी हूं।</p>
-              <p className="mt-2">अपने मन के प्रश्न पूछिए...</p>
+            <div className="text-center text-orange-600 font-hindi text-xl p-8 animate-fade-in">
+              <div className="mb-4 text-4xl">🙏</div>
+              <p className="mb-2">राधे राधे! मैं आपका आध्यात्मिक मित्र हूं।</p>
+              <p className="text-lg opacity-80">अपने मन के प्रश्न पूछिए और श्री कृष्ण का मार्गदर्शन पाइए...</p>
             </div>
           ) : (
             messages.map((message) => (
               <div
                 key={message.id}
-                className={`mb-4 flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                className={`mb-6 flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-xs md:max-w-md p-3 rounded-2xl ${
+                  className={`max-w-xs md:max-w-md p-4 rounded-2xl shadow-lg transform transition-all duration-300 hover:scale-105 ${
                     message.isUser
-                      ? 'bg-orange-500 text-white'
-                      : 'bg-white text-gray-800 shadow-md'
+                      ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white'
+                      : 'bg-white text-gray-800 shadow-xl border-l-4 border-orange-400'
                   }`}
                 >
-                  <p className="font-hindi">{message.text}</p>
+                  <p className="font-hindi leading-relaxed">{message.text}</p>
                 </div>
               </div>
             ))
           )}
           {isLoading && (
             <div className="flex justify-start mb-4">
-              <div className="bg-white p-3 rounded-2xl shadow-md">
-                <div className="animate-pulse text-orange-500">विचार कर रहा हूं...</div>
+              <div className="bg-white p-4 rounded-2xl shadow-lg border-l-4 border-orange-400">
+                <div className="animate-pulse text-orange-500 font-hindi flex items-center">
+                  <span>श्री कृष्ण से पूछ रहा हूं</span>
+                  <div className="ml-2 flex space-x-1">
+                    <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
         </ScrollArea>
       </div>
 
-      {/* Input Area */}
+      {/* Enhanced Input Area */}
       <div className="max-w-4xl mx-auto p-4">
-        <div className="flex gap-2 bg-white rounded-full shadow-lg p-2">
+        <div className="flex gap-3 bg-white/90 backdrop-blur-sm rounded-full shadow-2xl p-3 border border-orange-200">
           <Input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="अपने मन के प्रश्न पूछिए..."
-            className="border-none font-hindi text-lg focus-visible:ring-0"
+            placeholder="अपने मन के प्रश्न पूछिए... (हिंदी/English/Hinglish में)"
+            className="border-none font-hindi text-lg focus-visible:ring-0 bg-transparent placeholder:text-orange-400"
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
           />
           <Button
             onClick={handleSendMessage}
             disabled={isLoading}
-            className="rounded-full bg-orange-500 hover:bg-orange-600"
+            className="rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-5 h-5" />
           </Button>
         </div>
       </div>
