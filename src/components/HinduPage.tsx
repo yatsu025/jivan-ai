@@ -1,9 +1,9 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send, Home } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { callOpenRouterAPI } from '@/services/openRouterApi';
 
 interface Message {
   id: string;
@@ -22,44 +22,6 @@ const HinduPage = ({ onHome }: HinduPageProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  const callGeminiAPI = async (prompt: string) => {
-    try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyA7RiLN4pXGdCHd66yXmSdiRrlEgxmQykQ`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `You are a wise Hindu spiritual guide and devotee of Lord Krishna. Always respond in the same language as the user's question (Hindi, English, or Hinglish). 
-
-For Hindu spiritual guidance, structure your response as:
-"श्री कृष्ण कहते हैं: {relevant Gita shloka in Sanskrit}
-अर्थ: {meaning of the shloka in user's language}
-समाधान: {practical solution/guidance based on Krishna's teachings}"
-
-Keep responses helpful, respectful, and based on Hindu dharma, Bhagavad Gita, and Krishna's teachings. User question: ${prompt}`
-            }]
-          }]
-        })
-      });
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          return 'API अभी ज्यादा व्यस्त है। कृपया 2-3 मिनट बाद प्रयास करें। श्री कृष्ण आपके धैर्य को देख रहे हैं। 🙏';
-        }
-        throw new Error('API Error');
-      }
-
-      const data = await response.json();
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || 'श्री कृष्ण की कृपा से मैं आपकी सहायता करूंगा। कृपया अपना प्रश्न दोबारा पूछें। 🕉️';
-    } catch (error) {
-      console.error('Error calling Gemini API:', error);
-      return 'API में कुछ तकनीकी समस्या है। कृपया थोड़ी देर बाद प्रयास करें। हरे कृष्ण! 🙏';
-    }
-  };
-
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
@@ -74,7 +36,7 @@ Keep responses helpful, respectful, and based on Hindu dharma, Bhagavad Gita, an
     setInputValue('');
     setIsLoading(true);
 
-    const aiResponse = await callGeminiAPI(inputValue);
+    const aiResponse = await callOpenRouterAPI(inputValue, 'hindu');
     
     const aiMessage: Message = {
       id: (Date.now() + 1).toString(),

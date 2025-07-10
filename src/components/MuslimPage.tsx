@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send, Home } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { callOpenRouterAPI } from '@/services/openRouterApi';
 
 interface Message {
   id: string;
@@ -21,44 +22,6 @@ const MuslimPage = ({ onHome }: MuslimPageProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  const callGeminiAPI = async (prompt: string) => {
-    try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyA7RiLN4pXGdCHd66yXmSdiRrlEgxmQykQ`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `You are a wise Islamic spiritual guide. Always respond in the same language as the user's question (Hindi, English, Urdu, or Hinglish).
-
-For Islamic spiritual guidance, structure your response as:
-"अल्लाह तआला फरमाते हैं: {relevant Quranic verse in Arabic}  
-अर्थ: {meaning of the verse in user's language}
-समाधान: {practical solution/guidance based on Islamic teachings and Hadith}"
-
-Keep responses helpful, respectful, and based on Islamic teachings, Quran, and Prophet's Hadith. User question: ${prompt}`
-            }]
-          }]
-        })
-      });
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          return 'API अभी व्यस्त है। इंशाअल्लाह 2-3 मिनट बाद कोशिश करें। अल्लाह आपके सब्र को देख रहे हैं। 🤲';
-        }
-        throw new Error('API Error');
-      }
-
-      const data = await response.json();
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || 'इंशाअल्लाह, मैं अल्लाह की मदद से आपकी सहायता करूंगा। कृपया अपना सवाल दोबारा पूछें। ☪️';
-    } catch (error) {
-      console.error('Error calling Gemini API:', error);
-      return 'API में तकनीकी दिक्कत है। इंशाअल्लाह थोड़ी देर बाद कोशिश करें। अल्लाह हाफिज! 🤲';
-    }
-  };
-
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
@@ -73,7 +36,7 @@ Keep responses helpful, respectful, and based on Islamic teachings, Quran, and P
     setInputValue('');
     setIsLoading(true);
 
-    const aiResponse = await callGeminiAPI(inputValue);
+    const aiResponse = await callOpenRouterAPI(inputValue, 'muslim');
     
     const aiMessage: Message = {
       id: (Date.now() + 1).toString(),

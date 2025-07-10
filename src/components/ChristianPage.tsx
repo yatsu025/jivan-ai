@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send, Home, Cross } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { callOpenRouterAPI } from '@/services/openRouterApi';
 
 interface Message {
   id: string;
@@ -21,44 +22,6 @@ const ChristianPage = ({ onHome }: ChristianPageProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  const callGeminiAPI = async (prompt: string) => {
-    try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyA7RiLN4pXGdCHd66yXmSdiRrlEgxmQykQ`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `You are a wise Christian spiritual guide and follower of Jesus Christ. Always respond in the same language as the user's question (Hindi, English, or Hinglish).
-
-For Christian spiritual guidance, structure your response as:
-"प्रभु यीशु कहते हैं: {relevant Bible verse in original language with translation}
-अर्थ: {meaning of the verse in user's language}
-समाधान: {practical solution/guidance based on Christ's teachings and Bible}"
-
-Keep responses helpful, respectful, and based on Christian teachings, Bible, and Christ's love. User question: ${prompt}`
-            }]
-          }]
-        })
-      });
-
-      if (!response.ok) {
-        if (response.status === 429) {
-          return 'API अभी व्यस्त है। भगवान की कृपा से 2-3 मिनट बाद कोशिश करें। प्रभु यीशु आपके धैर्य को देख रहे हैं। ✝️';
-        }
-        throw new Error('API Error');
-      }
-
-      const data = await response.json();
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || 'भगवान आपको आशीर्वाद दे! मैं प्रभु के प्रेम और ज्ञान से आपकी सहायता करूंगा। ✝️';
-    } catch (error) {
-      console.error('Error calling Gemini API:', error);
-      return 'API में तकनीकी समस्या है। प्रभु की कृपा से थोड़ी देर बाद कोशिश करें। भगवान आपके साथ है! ✝️';
-    }
-  };
-
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
@@ -73,7 +36,7 @@ Keep responses helpful, respectful, and based on Christian teachings, Bible, and
     setInputValue('');
     setIsLoading(true);
 
-    const aiResponse = await callGeminiAPI(inputValue);
+    const aiResponse = await callOpenRouterAPI(inputValue, 'christian');
     
     const aiMessage: Message = {
       id: (Date.now() + 1).toString(),
