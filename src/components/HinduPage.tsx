@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send, Home } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { callOpenRouterAPI } from '@/services/openRouterApi';
+import { callGeminiAPI } from '@/services/geminiApi';
 
 interface Message {
   id: string;
@@ -36,7 +36,7 @@ const HinduPage = ({ onHome }: HinduPageProps) => {
     setInputValue('');
     setIsLoading(true);
 
-    const aiResponse = await callOpenRouterAPI(inputValue, 'hindu');
+    const aiResponse = await callGeminiAPI(inputValue, 'hindu');
     
     const aiMessage: Message = {
       id: (Date.now() + 1).toString(),
