@@ -55,7 +55,8 @@ Keep responses helpful, respectful, and based on Christian teachings, Bible, and
 
 export const callGeminiAPI = async (prompt: string, religion: string): Promise<string> => {
   try {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    // Use the provided API key directly for now
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyBRX0LzrxDpWCDc92UhTKQQjecKBc_rOeU';
     
     if (!apiKey) {
       throw new Error('Gemini API key not found');
